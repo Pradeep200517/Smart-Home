@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Dashboard</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            color: white;
+            background: url('https://www.thespruce.com/thmb/mEibsli-wVSbIBN_lo1maoyaRS8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Litchfield_BeresfordHill_025-5b89787fc9e77c00258aa53c.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        header {
+            color: white;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            min-height: 90vh;
+        }
+
+        #main-content {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        #sidebar {
+            width: 25%;
+            padding: 20px;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.6);
+            border-right: 2px solid rgba(255, 255, 255, 0.2);
+            overflow-y: auto;
+        }
+        
+        #sidebar h3 {
+            color: #f5f7f9;
+            text-align: center;
+        }
+        
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        #sidebar ul li {
+            margin: 10px 0;
+            padding: 15px;
+            background: rgba(35, 40, 48, 0.9);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        
+        #sidebar ul li:hover {
+            background: rgba(28, 37, 50, 0.9);
+            transform: scale(1.05);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+        }
+        
+        .toggle-switch input {
+            display: none;
+        }
+        
+        .toggle-switch label {
+            position: absolute;
+            cursor: pointer;
+            background-color: #131e2f; /* Button blue color */
+            border-radius: 15px;
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .toggle-switch label::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            top: 50%;
+            left: 5%;
+            transform: translate(0, -50%);
+            transition: transform 0.3s;
+        }
+        
+        .toggle-switch input:checked + label {
+            background-color: #a3c8ff;
+        }
+        
+        .toggle-switch input:checked + label::before {
+            transform: translate(25px, -50%);
+        }
+
+        #dashboard {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.6);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #schedule-controls {
+            padding: 20px;
+            border-radius: 10px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .schedule {
+            margin: 15px 0;
+            background: rgb(138, 138, 196);
+            color: #677994;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .schedule:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            font-weight: bold;
+            color: #a3d5ff;
+        }
+
+        input[type="time"], select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(16, 31, 50, 0.8);
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(24, 41, 63, 0.9);
+            transform: scale(1.05);
+        }
+
+        footer {
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: auto;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0e2038;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+            z-index: 1000;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Smart Home Dashboard</h1>
+    </header>
+    <div id="container">
+        <div id="main-content">
+            <aside id="sidebar">
+                <h3>Device Controls</h3>
+                <ul id="device-list"></ul>
+            </aside>
+            <main id="dashboard">
+                <div id="schedule-controls">
+                    <h3>Schedule Device Operations</h3>
+                    <div>
+                        <label for="schedule-device">Choose Device:</label>
+                        <select id="schedule-device"></select>
+                        <label for="start-time">Start Time:</label>
+                        <input type="time" id="start-time">
+                        <label for="end-time">End Time:</label>
+                        <input type="time" id="end-time">
+                        <button onclick="setSchedule()">Set Schedule</button>
+                    </div>
+                    <div id="schedule-list"></div>
+                </div>
+            </main>
+        </div>
+        <footer>
+            &copy; 2024 Smart Home Dashboard | All rights reserved
+        </footer>
+    </div>
+
+    <div class="notification" id="notification"></div>
+    <script>
+        const devices = [
+        { id: 1, name: 'Fan', status: false },
+        { id: 2, name: 'Light', status: false },
+        { id: 3, name: 'Geyser', status: false },
+        { id: 4, name: 'Tubelight', status: false },
+        { id: 5, name: 'Charging Port', status: false },
+        { id: 6, name: 'Microwave', status: false },
+        { id: 7, name: 'Electric Stove', status: false },
+        { id: 8, name: 'AC', status: false },
+        { id: 9, name: 'Fridge', status: false },
+        { id: 10, name: 'Washing Machine', status: false }
+        ];
+        
+        const deviceList = document.getElementById('device-list');
+        const scheduleDevice = document.getElementById('schedule-device');
+        const scheduleList = document.getElementById('schedule-list');
+        const notificationBox = document.getElementById('notification');
+        let schedules = [];
+        
+        function showNotification(message) {
+        notificationBox.innerText = message;
+        notificationBox.style.display = 'block';
+        setTimeout(() => {
+            notificationBox.style.display = 'none';
+        }, 2000);
+        }
+        
+        function renderDeviceList() {
+        deviceList.innerHTML = '';
+        scheduleDevice.innerHTML = '';
+        devices.forEach(device => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <span>${device.name}</span>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="toggle-${device.id}" ${device.status ? 'checked' : ''} onclick="toggleDevice(${device.id})">
+                    <label for="toggle-${device.id}"></label>
+                </div>
+            `;
+            deviceList.appendChild(listItem);
+            scheduleDevice.innerHTML += `<option value="${device.id}">${device.name}</option>`;
+        });
+        }
+        
+        function toggleDevice(id) {
+        const device = devices.find(d => d.id === id);
+        if (device) {
+            device.status = !device.status;
+            showNotification(`${device.name} turned ${device.status ? 'ON' : 'OFF'}`);
+        }
+        }
+        
+        function setSchedule() {
+        const deviceId = parseInt(scheduleDevice.value);
+        const startTime = document.getElementById('start-time').value;
+        const endTime = document.getElementById('end-time').value;
+        if (!deviceId || !startTime || !endTime) {
+            showNotification('All fields are required!');
+            return;
+        }
+        const newSchedule = { id: Date.now(), deviceId, startTime, endTime };
+        schedules.push(newSchedule);
+        renderSchedules();
+        showNotification('Schedule successfully added!');
+        }
+        
+        function deleteSchedule(id) {
+        schedules = schedules.filter(schedule => schedule.id !== id);
+        renderSchedules();
+        showNotification('Schedule successfully removed!');
+        }
+        
+        function renderSchedules() {
+        scheduleList.innerHTML = schedules.map(schedule => {
+            const device = devices.find(d => d.id === schedule.deviceId);
+            return `
+                <div class="schedule">
+                    <div>
+                        <p><strong>Device:</strong> ${device.name}</p>
+                        <p><strong>Start Time:</strong> ${schedule.startTime}</p>
+                        <p><strong>End Time:</strong> ${schedule.endTime}</p>
+                    </div>
+                    <button onclick="deleteSchedule(${schedule.id})" style="background:#d72323;">Delete</button>
+                </div>
+            `;
+        }).join('');
+        }
+        
+        renderDeviceList(); // Your existing JavaScript here
+    </script> <!-- The rest of your HTML remains unchanged -->
+</body>
+</html>
