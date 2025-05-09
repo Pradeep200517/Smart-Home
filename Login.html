@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Home</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            background-image: url('http://s1.picswalls.com/wallpapers/2014/08/08/house-high-quality-wallpaper_015636679_148.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .container h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .container input {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            text-align: center;
+            color: rgb(9, 5, 49);
+        }
+
+        .container button {
+            padding: 12px 20px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(to right, #1dd1a1, #10ac84);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, background 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .container button:hover {
+            background: linear-gradient(to right, #10ac84, #1dd1a1);
+            transform: scale(1.05);
+        }
+
+        .bluetooth {
+            margin-top: 20px;
+            color: #feca57;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .bluetooth:hover {
+            color: #ff9f43;
+            transform: scale(1.05);
+        }
+
+        .animation {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .animation span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #54a0ff;
+            border-radius: 50%;
+            margin: 0 5px;
+            animation: bounce 1.5s infinite ease-in-out;
+        }
+
+        .animation span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .animation span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Login to Smart Home</h1>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Enter Username" required>
+            <input type="password" id="password" placeholder="Enter Password" required>
+            <button type="button" onclick="login()">Login</button>
+        </form>
+        <p class="bluetooth" onclick="connectBluetooth()">Connect via Bluetooth</p>
+        <div class="animation" id="bluetooth-animation">
+            <span></span><span></span><span></span>
+            <p style="margin-top: 10px;">Connecting to Bluetooth...</p>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            console.log(`Username: ${username}, Password: ${password}`); // Log credentials
+            alert('Login successful!');
+            window.location.href = 'SmartHome.html'; // Redirect to dashboard
+        }
+
+        function connectBluetooth() {
+            const animation = document.getElementById('bluetooth-animation');
+            animation.style.display = 'block';
+
+            setTimeout(() => {
+                alert('Bluetooth connected successfully!');
+                animation.style.display = 'none';
+                window.location.href = 'SmartHome.html'; // Redirect to dashboard
+            }, 3000); // Simulate 3 seconds for Bluetooth connection
+        }
+    </script>
+</body>
+</html>
